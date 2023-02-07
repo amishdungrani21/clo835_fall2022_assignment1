@@ -41,7 +41,7 @@ module "globalvars" {
 
 resource "aws_instance" "workflow" {
   ami                    = data.aws_ami.latest_amazon_linux.id
-  instance_type                   = lookup(var.type, var.env)
+  instance_type          = lookup(var.type, var.env)
   key_name               = aws_key_pair.amishkey.key_name
   vpc_security_group_ids = [aws_security_group.workflow_security_group.id]
 
@@ -75,18 +75,8 @@ resource "aws_security_group" "workflow_security_group" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-
   ingress {
-    description      = "HTTP from blue"
+    description      = "Blue Container"
     from_port        = 8081
     to_port          = 8081
     protocol         = "tcp"
@@ -94,7 +84,7 @@ resource "aws_security_group" "workflow_security_group" {
     ipv6_cidr_blocks = ["::/0"]
   }
   ingress {
-    description      = "HTTP from pink"
+    description      = "Pink Container"
     from_port        = 8082
     to_port          = 8082
     protocol         = "tcp"
@@ -103,13 +93,22 @@ resource "aws_security_group" "workflow_security_group" {
   }
 
   ingress {
-    description      = "HTTP from lime"
+    description      = "Lime Container"
     from_port        = 8083
     to_port          = 8083
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+  
+    egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
 
   tags = merge(local.default_tags,
     {
