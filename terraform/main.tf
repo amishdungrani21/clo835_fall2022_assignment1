@@ -39,7 +39,6 @@ module "globalvars" {
 }
 
 
-# Create First EC2/Webserver
 resource "aws_instance" "workflow" {
   ami                    = data.aws_ami.latest_amazon_linux.id
   instance_type                   = lookup(var.type, var.env)
@@ -58,15 +57,12 @@ resource "aws_instance" "workflow" {
 }
 
 
-
-# Adding SSH key for EC2/Webserver
 resource "aws_key_pair" "amishkey" {
   key_name   = local.prefix_main
   public_key = file("${local.prefix_main}.pub")
 }
 
 
-# Security Group For webapp
 resource "aws_security_group" "workflow_security_group" {
   name        = "allow_ssh"
   description = "Allow HTTP and SSH inbound traffic"
